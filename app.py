@@ -9,9 +9,12 @@ from sklearn.ensemble import RandomForestRegressor
 st.title("🎬 Cinelytics")
 st.write("Predict a movie's box office revenue based on its features!")
 
+model_choice = st.selectbox("Choose model:", ["Linear Regression", "Random Forest"])
+
 
 # ----- Model Loading -----
-# If you haven't saved the model yet, you can re-train quickly here
+
+
 @st.cache_data
 def load_data_and_model():
     movies = pd.read_csv("tmdb_5000_movies.csv", low_memory=False)
@@ -41,8 +44,6 @@ def load_data_and_model():
     ]
     X = movies[features]
     y = movies["revenue"]
-
-    model_choice = st.selectbox("Choose model:", ["Linear Regression", "Random Forest"])
 
     if model_choice == "Linear Regression":
         model = LinearRegression()
