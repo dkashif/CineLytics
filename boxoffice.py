@@ -45,14 +45,9 @@ for i, row in movies.iterrows():
     except:
         pass
 
-features = [
-    "budget",
-    "popularity",
-    "runtime",
-    "vote_average",
-    "budget_per_min",
-    "genre_count",
-] + [col for col in movies.columns if col.startswith("genre_")]
+features = ["budget", "popularity", "runtime", "vote_average"] + [
+    col for col in movies.columns if col.startswith("genre_")
+]
 
 X = movies[features]
 y = movies["revenue"]

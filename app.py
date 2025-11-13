@@ -52,14 +52,9 @@ def load_data_and_model():
 
     model.fit(X, y)
     # return the trained model, the set of genres and the ordered feature list
-    features = [
-        "budget",
-        "popularity",
-        "runtime",
-        "vote_average",
-        "budget_per_min",
-        "genre_count",
-    ] + [col for col in movies.columns if col.startswith("genre_")]
+    features = ["budget", "popularity", "runtime", "vote_average"] + [
+        col for col in movies.columns if col.startswith("genre_")
+    ]
     return model, all_genres, features
 
 
