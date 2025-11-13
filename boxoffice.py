@@ -17,6 +17,11 @@ movies = movies.dropna(subset=["runtime", "popularity", "vote_average"])
 
 # this extracts the release year
 movies["release_year"] = pd.to_datetime(movies["release_date"], errors="coerce").dt.year
+movies["budget_per_min"] = movies["budget"] / movies["runtime"]
+movies["genre_count"] = movies["genres"].apply(
+    lambda x: len(ast.literal_eval(x)) if isinstance(x, str) else 0
+)
+movies["decade"] = (movies["release_year"] // 10) * 10
 
 # extract genre
 all_genres = set()
@@ -39,12 +44,21 @@ for i, row in movies.iterrows():
     except:
         pass
 
-features = ["budget", "popularity", "runtime", "vote_average"] + [
-    col for col in movies.columns if col.startswith("genre_")
-]
+features = [
+    "budget",
+    "popularity",
+    "runtime",
+    "vote_average",
+    "budget_per_min",
+    "genre_count",
+] + [col for col in movies.columns if col.startswith("genre_")]
 
 X = movies[features]
 y = movies["revenue"]
+
+# Apply log transform to reduce skew
+movies["log_revenue"] = np.log1p(movies["revenue"])
+y = movies["log_revenue"]
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
@@ -53,10 +67,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = LinearRegression()
 model.fit(X_train, y_train)
 preds = model.predict(X_test)
-# Compute RMSE in a version-agnostic way (some sklearn versions don't accept `squared`)
-rmse = np.sqrt(mean_squared_error(y_test, preds))
+# Convert log-revenue predictions back to real revenue for interpretability
+preds_actual = np.expm1(preds)
+rmse = np.sqrt(mean_squared_error(np.expm1(y_test), preds_actual))
 print("RMSE:", rmse)
-print("R^2:", r2_score(y_test, preds))
+print("R^2 (on log scale):", r2_score(y_test, preds))
 
 sns.scatterplot(x=y_test, y=preds)
 plt.xlabel("Actual Revenue")
