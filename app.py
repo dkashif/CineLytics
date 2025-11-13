@@ -5,7 +5,7 @@ import pickle
 from sklearn.linear_model import LinearRegression
 import ast
 
-st.title("🎬 Movie Box Office Revenue Predictor")
+st.title("🎬 Cinelytics")
 st.write("Predict a movie's box office revenue based on its features!")
 
 
