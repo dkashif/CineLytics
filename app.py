@@ -4,12 +4,9 @@ import numpy as np
 import pickle
 from sklearn.linear_model import LinearRegression
 import ast
-from sklearn.ensemble import RandomForestRegressor
 
 st.title("🎬 Cinelytics")
 st.write("Predict a movie's box office revenue based on its features!")
-
-model_choice = st.selectbox("Choose model:", ["Linear Regression", "Random Forest"])
 
 
 # ----- Model Loading -----
@@ -45,11 +42,7 @@ def load_data_and_model():
     X = movies[features]
     y = movies["revenue"]
 
-    if model_choice == "Linear Regression":
-        model = LinearRegression()
-    elif model_choice == "Random Forest":
-        model = RandomForestRegressor(n_estimators=200, random_state=42)
-
+    model = LinearRegression()
     model.fit(X, y)
     # return the trained model, the set of genres and the ordered feature list
     features = ["budget", "popularity", "runtime", "vote_average"] + [
