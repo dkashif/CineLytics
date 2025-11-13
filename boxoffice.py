@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.ensemble import RandomForestRegressor
 
 movies = pd.read_csv("tmdb_5000_movies.csv", low_memory=False)
 movies.head()
@@ -72,6 +73,10 @@ preds_actual = np.expm1(preds)
 rmse = np.sqrt(mean_squared_error(np.expm1(y_test), preds_actual))
 print("RMSE:", rmse)
 print("R^2 (on log scale):", r2_score(y_test, preds))
+rf = RandomForestRegressor(n_estimators=200, random_state=42)
+rf.fit(X_train, y_train)
+rf_preds = rf.predict(X_test)
+print("RF R^2:", r2_score(y_test, rf_preds))
 
 sns.scatterplot(x=y_test, y=preds)
 plt.xlabel("Actual Revenue")
@@ -82,4 +87,11 @@ plt.show()
 corr = movies[["budget", "popularity", "runtime", "vote_average", "revenue"]].corr()
 sns.heatmap(corr, annot=True, cmap="coolwarm")
 plt.title("Feature Correlations")
+plt.show()
+
+importances = pd.Series(rf.feature_importances_, index=X.columns).sort_values(
+    ascending=False
+)[:10]
+sns.barplot(x=importances, y=importances.index)
+plt.title("Top 10 Feature Importances")
 plt.show()
