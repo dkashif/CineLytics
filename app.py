@@ -78,5 +78,3 @@ input_data = pd.DataFrame([input_dict], columns=features)
 if st.button("Predict Revenue"):
     prediction = model.predict(input_data)[0]
     st.success(f"🎯 Estimated Box Office Revenue: **${prediction:,.0f}**")
-with open("movie_revenue_model.pkl", "rb") as f:
-    model = pickle.load(f)
